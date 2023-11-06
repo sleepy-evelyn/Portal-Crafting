@@ -1,7 +1,7 @@
 # Portal Crafting
 This mod adds a recipe type which enables crafting using portals.
 
-![Available on Modrinth](https://raw.githubusercontent.com/intergrav/devins-badges/1aec26abb75544baec37249f42008b2fcc0e731f/assets/cozy/available/modrinth_vector.svg)
+[![Available on Modrinth](https://raw.githubusercontent.com/intergrav/devins-badges/1aec26abb75544baec37249f42008b2fcc0e731f/assets/cozy/available/modrinth_vector.svg)](https://modrinth.com/mod/portal-crafting)
 ![Available on Quilt](https://raw.githubusercontent.com/intergrav/devins-badges/1aec26abb75544baec37249f42008b2fcc0e731f/assets/cozy/supported/quilt_vector.svg)
 ![Available on Fabric](https://raw.githubusercontent.com/intergrav/devins-badges/1aec26abb75544baec37249f42008b2fcc0e731f/assets/cozy/supported/fabric_vector.svg)
 <img src="https://github.com/sleepy-evelyn/Portal-Crafting/assets/46009144/5551f2e0-20c5-4dda-88f9-f80224b2592a" height="57px">
