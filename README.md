@@ -9,30 +9,25 @@ This mod adds a recipe type which enables crafting using portals.
 
 ## Features
 - Support for all kinds of portals both vanilla and modded
-- Support for up to 4 unique items as ingredient inputs
 - A bunch of different ways to return items such as merging into the portal frame
 - Integration with EMI and REI showing recipes
 
 ## Example
 
-A recipe that accepts 4 obsidian and 1 ghast tear which when thrown into an end portal returns 4 crying obsidian to the player
+A recipe that accepts 1 ghast tear which will turn 3 obsidian blocks within a nether portal frame into crying obsidian
 ```json
 {
   "type": "portalcrafting:portal_crafting",
-  "input": [
-    { 
-      "item": "minecraft:obsidian",
-      "count": 4 
-    },
-    { 
-      "item": "minecraft:ghast_tear" 
-    }
-  ],
-  "portal_block": "minecraft:end_portal",
-  "action": "return_to_player",
+  "input": {
+      "item": "minecraft:ghast_tear",
+      "count": 1
+  },
+  "portal_block": "minecraft:nether_portal_block",
+  "frame_block": "minecraft:obsidian"
+  "action": "merge_into_frame",
   "result": {
     "item": "minecraft:crying_obsidian",
-    "count": 4
+    "count": 3
   }
 }
 ```
