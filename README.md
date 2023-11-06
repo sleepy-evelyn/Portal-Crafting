@@ -10,7 +10,7 @@ A mod which adds a new recipe type which allows crafting using portals.
 - Support for all kinds of portals both vanilla and ~~modded~~ (coming soon)
 - A bunch of different ways to return items such as merging into the portal frame or throwing items back
 - Event hooks for modders who want to add a bit more flair
-- Directintegration with EMI and REI
+- Direct integration with EMI and REI
 
 ## Example
 
