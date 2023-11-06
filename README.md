@@ -19,7 +19,7 @@ A recipe that accepts 1 ghast tear which will turn 3 obsidian blocks within a ne
 {
   "type": "portalcrafting:nether",
   "input": {
-      "item": "minecraft:ghast_tear",
+      "item": "minecraft:ghast_tear"
   },
   "action": "merge_into_frame",
   "result": {
