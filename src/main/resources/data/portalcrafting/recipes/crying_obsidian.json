@@ -1,0 +1,11 @@
+{
+  "type": "portalcrafting:nether",
+  "ingredient": {
+    "item": "minecraft:ghast_tear"
+  },
+  "action": "merge",
+  "result": {
+    "item": "minecraft:crying_obsidian",
+    "count": 3
+  }
+}

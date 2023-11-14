@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "io.github.sleepy_evelyn.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "AbstractBlockMixin",
+    "EndPortalBlockMixin",
+    "ItemEntityMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+	}
+}
