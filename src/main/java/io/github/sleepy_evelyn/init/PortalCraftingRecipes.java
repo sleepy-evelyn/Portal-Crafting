@@ -1,7 +1,7 @@
 package io.github.sleepy_evelyn.init;
 
 import io.github.sleepy_evelyn.PortalCrafting;
-import io.github.sleepy_evelyn.api.recipe.SimplePortalRecipeSerializer;
+import io.github.sleepy_evelyn.api.recipe.PortalRecipeSerializer;
 import io.github.sleepy_evelyn.recipe.EndPortalRecipe;
 import io.github.sleepy_evelyn.recipe.NetherPortalRecipe;
 import net.minecraft.recipe.Recipe;
@@ -12,10 +12,10 @@ import net.minecraft.registry.Registry;
 
 public class PortalCraftingRecipes {
 
-    public static final SimplePortalRecipeSerializer<NetherPortalRecipe> NETHER_PORTAL_RECIPE_SERIALIZER
-            = registerSerializer("nether", new SimplePortalRecipeSerializer<>(NetherPortalRecipe::new));
-    public static final SimplePortalRecipeSerializer<EndPortalRecipe> END_PORTAL_RECIPE_SERIALIZER
-            = registerSerializer("end", new SimplePortalRecipeSerializer<>(EndPortalRecipe::new));
+    public static final PortalRecipeSerializer<NetherPortalRecipe> NETHER_PORTAL_RECIPE_SERIALIZER
+            = registerSerializer("nether", new PortalRecipeSerializer<>(NetherPortalRecipe::new));
+    public static final PortalRecipeSerializer<EndPortalRecipe> END_PORTAL_RECIPE_SERIALIZER
+            = registerSerializer("end", new PortalRecipeSerializer<>(EndPortalRecipe::new));
 
     public static final RecipeType<NetherPortalRecipe> NETHER_PORTAL_RECIPE_TYPE = registerType("nether");
     public static final RecipeType<EndPortalRecipe> END_PORTAL_RECIPE_TYPE = registerType("end");

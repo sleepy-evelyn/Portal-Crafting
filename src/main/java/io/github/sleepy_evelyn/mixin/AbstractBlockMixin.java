@@ -37,6 +37,7 @@ public class AbstractBlockMixin {
                     territorial$tryActivateRecipe(PortalCraftingRecipes.CUSTOM_PORTAL_RECIPE_TYPE, inventory, world, itemEntity);
             }
         }
+        ((ItemEntity) entity).setOwner()
     }
 
     @Unique

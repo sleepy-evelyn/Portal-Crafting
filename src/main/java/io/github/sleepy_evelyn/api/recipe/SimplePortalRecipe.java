@@ -15,9 +15,9 @@ import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class SimplePortalRecipe implements PortalRecipe {
+import java.util.stream.Collector;
 
-    private static final ObjectSet<ItemStack> ALL_INGREDIENT_STACKS = new ObjectArraySet<>();
+public abstract class SimplePortalRecipe implements PortalRecipe {
 
     private final RecipeType<?> recipeType;
     private final Identifier id;
@@ -105,6 +105,8 @@ public abstract class SimplePortalRecipe implements PortalRecipe {
     public Identifier getId() { return id; }
 
     public static boolean hasRecipe(ItemStack itemStack) {
-        return ALL_INGREDIENT_STACKS.contains(itemStack);
+        return ALL_INGREDIENTS.contains(itemStack)
+
+        return ALL_INGREDIENTS.stream().anyMatch(ingredient -> ingredient.test(itemStack));
     }
 }

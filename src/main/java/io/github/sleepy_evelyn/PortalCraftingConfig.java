@@ -12,7 +12,7 @@ public class PortalCraftingConfig {
     private static final String HEADER = """
                 
               Portal Crafting config file
-              For information on how to configure the config visit: https://github.com/sleepy-evelyn/Portal-Crafting/wiki
+              For details on how to configure the config visit: https://github.com/sleepy-evelyn/Portal-Crafting/wiki
             """;
 
     private final File file;
@@ -22,7 +22,9 @@ public class PortalCraftingConfig {
     PortalCraftingConfig() {
         Properties defaults = new Properties();
         defaults.setProperty("bundlesEnabled", "true"); // Set defaults
-        defaults.setProperty("maxIngredients", "3");
+        defaults.setProperty("automatedCraftingEnabled", "true");
+        defaults.setProperty("allowMultiInputCrafting", "true");
+        defaults.setProperty("itemContainerLimit", "100");
 
         this.defaults = defaults;
         this.file = new File(CONFIG_DIRECTORY, PortalCraftingAPI.MOD_ID + ".properties");

@@ -15,11 +15,11 @@ import net.minecraft.util.collection.DefaultedList;
 
 import java.util.Locale;
 
-public class SimplePortalRecipeSerializer<T extends SimplePortalRecipe> implements RecipeSerializer<T> {
+public class PortalRecipeSerializer<T extends PortalRecipe> implements RecipeSerializer<T> {
 
     private final RecipeFactory<T> recipeFactory;
 
-    public SimplePortalRecipeSerializer(RecipeFactory<T> recipeFactory) {
+    public PortalRecipeSerializer(RecipeFactory<T> recipeFactory) {
         this.recipeFactory = recipeFactory;
     }
 
@@ -79,7 +79,7 @@ public class SimplePortalRecipeSerializer<T extends SimplePortalRecipe> implemen
         buf.writeBoolean(recipe.closesPortal());
     }
 
-    public interface RecipeFactory<T extends SimplePortalRecipe> {
+    public interface RecipeFactory<T extends PortalRecipe> {
         T create(Identifier id, DefaultedList<Ingredient> ingredients, CraftAction craftAction, boolean closePortal, ItemStack result);
     }
 }

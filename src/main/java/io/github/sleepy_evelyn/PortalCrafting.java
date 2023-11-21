@@ -15,6 +15,8 @@ public class PortalCrafting implements ModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger(PortalCraftingAPI.MOD_ID);
 	public static final PortalCraftingConfig CONFIG = new PortalCraftingConfig();
 
+	public static final int ITEM_CONTAINER_LIMIT_DEFAULT = 10;
+
 	@Override
 	public void onInitialize() {
 		PortalCraftingRecipes.initialize();
