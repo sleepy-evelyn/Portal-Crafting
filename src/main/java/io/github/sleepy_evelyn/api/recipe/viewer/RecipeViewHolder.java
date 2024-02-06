@@ -1,4 +1,4 @@
-package io.github.sleepy_evelyn.api.recipe;
+package io.github.sleepy_evelyn.api.recipe.viewer;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;

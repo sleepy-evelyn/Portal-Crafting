@@ -1,8 +1,8 @@
 package io.github.sleepy_evelyn.api.recipe;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import io.github.sleepy_evelyn.api.recipe.ingredient.IngredientsHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.recipe.Ingredient;
@@ -15,17 +15,15 @@ import net.minecraft.util.collection.DefaultedList;
 
 import java.util.Locale;
 
-public class PortalRecipeSerializer<T extends PortalRecipe> implements RecipeSerializer<T> {
+public class SimplePortalRecipeSerializer<T extends PortalRecipe> implements RecipeSerializer<T> {
 
     private final RecipeFactory<T> recipeFactory;
 
-    public PortalRecipeSerializer(RecipeFactory<T> recipeFactory) {
-        this.recipeFactory = recipeFactory;
-    }
+    public SimplePortalRecipeSerializer(RecipeFactory<T> recipeFactory) { this.recipeFactory = recipeFactory; }
 
     @Override
     public T read(Identifier id, JsonObject json) {
-        DefaultedList<Ingredient> ingredients = getIngredients(json);
+        DefaultedList<Ingredient> ingredients = IngredientsHelper.getIngredients(json);
         if (ingredients.isEmpty())
             throw new JsonParseException("Recipe " + id + " failed to load. No Ingredients where provided");
 
@@ -36,25 +34,6 @@ public class PortalRecipeSerializer<T extends PortalRecipe> implements RecipeSer
         boolean closePortal = JsonHelper.getBoolean(json, "close", false); // Whether to close the portal or not
 
         return recipeFactory.create(id, ingredients, craftAction, closePortal, resultStack);
-    }
-
-    private DefaultedList<Ingredient> getIngredients(JsonObject json) {
-        DefaultedList<Ingredient> ingredients = DefaultedList.of();
-
-        // Check for ingredients either as an array or single input
-        if (JsonHelper.hasArray(json, "ingredients")) {
-            JsonArray ingredientArray = JsonHelper.getArray(json, "ingredients");
-            for (var ingredientObj : ingredientArray) {
-                var ingredient = Ingredient.fromJson(ingredientObj, false);
-                if (!ingredient.isEmpty())
-                    ingredients.add(ingredient);
-            }
-        } else {
-            var ingredient = Ingredient.fromJson(JsonHelper.getObject(json, "ingredient"), false);
-            if (!ingredient.isEmpty())
-                ingredients.add(ingredient);
-        }
-        return ingredients;
     }
 
     @Override

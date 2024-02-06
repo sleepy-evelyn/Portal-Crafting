@@ -1,32 +1,31 @@
 package io.github.sleepy_evelyn;
 
-import io.github.sleepy_evelyn.api.PortalCraftingAPI;
 import io.github.sleepy_evelyn.init.PortalCraftingRecipes;
+import io.github.sleepy_evelyn.recipe.CollectIngredientsHandler;
+import io.github.sleepy_evelyn.recipe.RecipeReloadListener;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
-import net.minecraft.item.ItemGroups;
-import net.minecraft.item.Items;
-import net.minecraft.util.Identifier;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.fabricmc.fabric.api.gamerule.v1.GameRuleFactory;
+import net.fabricmc.fabric.api.gamerule.v1.GameRuleRegistry;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.minecraft.resource.ResourceType;
+import net.minecraft.world.GameRules;
 
 public class PortalCrafting implements ModInitializer {
 
-	public static final Logger LOGGER = LoggerFactory.getLogger(PortalCraftingAPI.MOD_ID);
-	public static final PortalCraftingConfig CONFIG = new PortalCraftingConfig();
+	public static final CraftingRulesProvider CONFIG = new CraftingRulesProvider();
 
-	public static final int ITEM_CONTAINER_LIMIT_DEFAULT = 10;
+	public static final GameRules.Key<GameRules.BooleanRule> BUNDLES_ENABLED
+			= GameRuleRegistry.register("bundlesEnabled", GameRules.Category.MISC, GameRuleFactory.createBooleanRule(true));
 
 	@Override
 	public void onInitialize() {
 		PortalCraftingRecipes.initialize();
+		CollectIngredientsHandler.initialize();
 
-		if (CONFIG.getBoolean("bundlesEnabled"))
+		/*if (CONFIG.getBoolean("bundlesEnabled"))
 			ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS_AND_UTILITIES)
-					.register((entries) -> entries.addItem(Items.BUNDLE));
-	}
+					.register((entries) -> entries.addItem(Items.BUNDLE));*/
 
-	public static Identifier id(String path) {
-		return new Identifier(PortalCraftingAPI.MOD_ID, path);
+		ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new RecipeReloadListener());
 	}
 }

@@ -1,23 +1,30 @@
 package io.github.sleepy_evelyn.api.recipe;
 
 import io.github.sleepy_evelyn.api.exception.PortalCraftException;
-import it.unimi.dsi.fastutil.objects.ObjectArraySet;
-import it.unimi.dsi.fastutil.objects.ObjectSet;
 import net.minecraft.block.Block;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.inventory.SimpleInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.recipe.*;
+import net.minecraft.recipe.Ingredient;
+import net.minecraft.recipe.RecipeMatcher;
+import net.minecraft.recipe.RecipeType;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.stream.Collector;
+import java.util.*;
+import java.util.stream.Collectors;
 
+/**
+ * A basic portal recipe.
+ */
 public abstract class SimplePortalRecipe implements PortalRecipe {
+
+    private static final Map<RecipeType<?>, Set<Item>> ALL_INGREDIENT_ITEMS = new HashMap<>();
 
     private final RecipeType<?> recipeType;
     private final Identifier id;
@@ -33,6 +40,13 @@ public abstract class SimplePortalRecipe implements PortalRecipe {
         this.craftAction = craftAction;
         this.closePortal = closePortal;
         this.result = result;
+
+        // Add to the global list of
+        ALL_INGREDIENT_ITEMS.computeIfAbsent(recipeType, k -> new HashSet<>())
+                .addAll(ingredients.stream()
+                .flatMap(ingredient -> Arrays.stream(ingredient.getMatchingStacks()))
+                .map(ItemStack::getItem)
+                .collect(Collectors.toSet()));
     }
 
     @Override
@@ -42,52 +56,38 @@ public abstract class SimplePortalRecipe implements PortalRecipe {
                 .filter(itemStack -> !itemStack.isEmpty())
                 .peek(itemStack -> recipeMatcher.addInput(itemStack, 1))
                 .count();
-
         return itemCount == ingredients.size() && recipeMatcher.match(this, null);
     }
 
-
     @Override
-    public void craft(SimpleInventory inventory, World targetWorld, @NotNull ItemEntity finalIngredientEntity) throws PortalCraftException {
-        if (inventory.isEmpty())
+    public void craft(SimpleInventory craftingInventory, ItemEntity ingredientsHolder, @Nullable World targetWorld) throws PortalCraftException {
+        if (craftingInventory.isEmpty())
             throw new PortalCraftException(id, "Cannot craft from an empty inventory.");
-        else if (targetWorld == null)
-            throw new PortalCraftException(id, "Destination world does not exist");
 
-        boolean isResultBlock = !Block.getBlockFromItem(result.getItem()).getDefaultState().isAir();
         switch (getCraftAction()) {
             case MERGE -> {
-                if (isResultBlock) merge(targetWorld, finalIngredientEntity);
+                Block blockResult = Block.getBlockFromItem(result.getItem());
+                if (blockResult.getDefaultState().isAir())
+                    throw new PortalCraftException(id, "Failed to merge the result into the portals frame. The result is not a block item.");
+                else
+                    merge(ingredientsHolder, blockResult, targetWorld);
             }
-            case RETURN -> returnFromPortal(targetWorld, finalIngredientEntity);
-            case PASS_THROUGH -> passThrough(targetWorld, finalIngredientEntity);
-            default -> defaults(targetWorld, finalIngredientEntity);
+            case RETURN -> returnFromPortal(ingredientsHolder, targetWorld);
+            case PASS_THROUGH -> {
+                if (targetWorld != null)
+                    passThrough(ingredientsHolder, targetWorld);
+            }
         }
     }
 
-    protected void returnFromPortal(World targetWorld, ItemEntity itemEntity) {
-        var velocity = itemEntity.getVelocity();
-        targetWorld.spawnEntity(new ItemEntity(
-                targetWorld, itemEntity.getX(), itemEntity.getY(), itemEntity.getZ(),
-                getResult(DynamicRegistryManager.EMPTY), -velocity.x, -velocity.y, -velocity.z
-        ));
-        itemEntity.remove(Entity.RemovalReason.DISCARDED);
-    }
+    abstract protected void returnFromPortal(ItemEntity itemEntity, @Nullable World targetWorld) throws PortalCraftException;
 
-    protected void merge(World targetWorld, ItemEntity finalIngredientEntity) {
+    abstract protected void merge(ItemEntity ingredientsHolder, Block blockResult, @Nullable World targetWorld) throws PortalCraftException;
 
-    }
-
-    protected void passThrough(World targetWorld, ItemEntity itemEntity) {
-
-    }
-
-    protected void defaults(World targetWorld, ItemEntity finalIngredientEntity) {
-        returnFromPortal(targetWorld, finalIngredientEntity);
-    }
+    abstract protected void passThrough(ItemEntity ingredientsHolder, @NotNull World targetWorld) throws PortalCraftException;
 
     @Override
-    public CraftAction getCraftAction() { return craftAction; };
+    public CraftAction getCraftAction() { return craftAction; }
 
     @Override
     public boolean closesPortal() { return closePortal; }
@@ -104,9 +104,12 @@ public abstract class SimplePortalRecipe implements PortalRecipe {
     @Override
     public Identifier getId() { return id; }
 
-    public static boolean hasRecipe(ItemStack itemStack) {
-        return ALL_INGREDIENTS.contains(itemStack)
-
-        return ALL_INGREDIENTS.stream().anyMatch(ingredient -> ingredient.test(itemStack));
+    public static boolean hasItemIngredient(RecipeType<?> recipeType, Item itemIngredient) {
+        if (ALL_INGREDIENT_ITEMS.containsKey(recipeType)) {
+            Set<Item> allRecipeItems = ALL_INGREDIENT_ITEMS.get(recipeType);
+            if (allRecipeItems != null && !allRecipeItems.isEmpty())
+                return allRecipeItems.contains(itemIngredient);
+        }
+        return false;
     }
 }

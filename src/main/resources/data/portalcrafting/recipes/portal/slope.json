@@ -1,0 +1,22 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        " AA",
+        "ABC"
+    ],
+    "key": {
+        "A": {
+            "item": "minecraft:iron_ingot"
+        },
+        "B": {
+            "tag": "minecaft:iron_ingot"
+        },
+        "C": {
+            "tag": "c:slimeballs"
+        }
+    },
+    "result": {
+        "item": "minecraft:iron_nugget",
+        "count": 6
+    }
+}

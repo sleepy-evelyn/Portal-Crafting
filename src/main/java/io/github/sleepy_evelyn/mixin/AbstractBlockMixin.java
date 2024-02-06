@@ -1,10 +1,8 @@
 package io.github.sleepy_evelyn.mixin;
 
-import io.github.sleepy_evelyn.init.PortalCraftingRecipes;
 import io.github.sleepy_evelyn.recipe.AbstractPortalRecipe;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.inventory.SimpleInventory;
@@ -24,6 +22,7 @@ public class AbstractBlockMixin {
     public void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity, CallbackInfo ci) {
         var block = state.getBlock();
 
+        /*
         if (AbstractPortalRecipe.isSupported(block)) {
             if (entity instanceof ItemEntity itemEntity) {
                 var itemStack = itemEntity.getStack();
@@ -35,9 +34,11 @@ public class AbstractBlockMixin {
                     territorial$tryActivateRecipe(PortalCraftingRecipes.END_PORTAL_RECIPE_TYPE, inventory, world, itemEntity);
                 else
                     territorial$tryActivateRecipe(PortalCraftingRecipes.CUSTOM_PORTAL_RECIPE_TYPE, inventory, world, itemEntity);
+
             }
         }
         ((ItemEntity) entity).setOwner()
+        */
     }
 
     @Unique

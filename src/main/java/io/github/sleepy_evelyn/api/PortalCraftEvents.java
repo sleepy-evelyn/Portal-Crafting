@@ -7,9 +7,10 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Set;
 
 public final class PortalCraftEvents {
 
@@ -32,18 +33,13 @@ public final class PortalCraftEvents {
                     callback.cancelled(recipe, craftingInventory, finalIngredientEntity, targetWorld);
             });
 
-    public static final Event<IngredientAdded<PortalRecipe>> INGREDIENT_ADDED = EventFactory.createArrayBacked(
-            IngredientAdded.class, (callbacks) -> (recipe, inventory, world, ingredientEntity) -> {
-                for (IngredientAdded<PortalRecipe> callback : callbacks)
-                    return callback.ingredientAdded(recipe, inventory, world, ingredientEntity);
-                return true;
-            });
+    public static final Event<CollectStacks> COLLECT_STACKS = EventFactory.createArrayBacked(
+            CollectStacks.class, callbacks -> (itemEntity, collectedStacks) -> {
+                for (CollectStacks callback : callbacks)
+                    callback.collectStacks(itemEntity, collectedStacks);
 
-    public static final Event<CollectIngredients> COLLECT_INGREDIENTS = EventFactory.createArrayBacked(
-            CollectIngredients.class, callbacks -> itemEntity -> {
-                for (CollectIngredients callback : callbacks)
-                    return callback.collectIngredients(itemEntity);
-                return DefaultedList.of();
+                if (collectedStacks.isEmpty()) // No item containers where found so use the item entities stack instead
+                    collectedStacks.add(itemEntity.getStack());
             });
 
     public interface Crafted<T extends PortalRecipe> {
@@ -67,7 +63,7 @@ public final class PortalCraftEvents {
          * @param targetWorld World the crafting result will be sent to if crafting is set to continue. A null value
          *      signifies the result does not need to move between dimensions.
          *
-         * @return True if crafting should continue. Otherwise, crafting is cancelled and the ingredients returned.
+         * @return True if crafting should continue or false if crafting should be abandoned.
          */
         boolean matches(T portalRecipe, SimpleInventory craftingInventory, ItemEntity finalIngredientEntity, @Nullable World targetWorld);
     }
@@ -85,28 +81,15 @@ public final class PortalCraftEvents {
         void cancelled(T portalRecipe, SimpleInventory craftingInventory, ItemEntity finalIngredientEntity, @Nullable World targetWorld);
     }
 
-    public interface IngredientAdded<T extends PortalRecipe> {
+    public interface CollectStacks {
         /**
-         * Called after an ingredient is added to a recipe.
-         *
-         * @param craftingInventory Inventory containing the crafting ingredients provided already.
-         * @param ingredientEntity Entity of the ingredient thrown into the portal. Gives context about the world
-         *      and the ingredients item stack, position and velocity.
-         *
-         * @return True if the ingredient should be accepted into the recipe. Otherwise, the ingredient will be returned.
-         */
-        boolean ingredientAdded(T portalRecipe, SimpleInventory craftingInventory, World world, ItemEntity ingredientEntity);
-    }
-
-    public interface CollectIngredients {
-        /**
-         * Called after an item is thrown into a nether / end portal or any other portal that uses 'moveToWorld' (QM, Yarn).
-         * Used to collect ingredients (items) from containers that store other items. Such as a Bundle or Shulker box.
+         * Called just before ingredients are added to a recipe. Used to collect item stacks from containers such as
+         * Bundles or Shulker Boxes that store other items in them. Will return a single stack if no container is found.
          *
          * @param itemEntity The item entity thrown into the portal.
-         * @return The items (ingredients) extracted from the container. Will be air if no container item is found.
+         * @param collectedStacks Collected stacks from the containers prior. Add to this set if any new stacks are found.
          */
-        DefaultedList<ItemStack> collectIngredients(ItemEntity itemEntity);
+        void collectStacks(ItemEntity itemEntity, Set<ItemStack> collectedStacks);
     }
 
     private PortalCraftEvents() {}
